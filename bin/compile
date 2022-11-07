@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+set -o errexit    # always exit on error
+#set -o pipefail   # don't ignore exit codes when piping output
+set -o nounset    # fail on unset variables
+unset GIT_DIR     # Avoid GIT_DIR leak from previous build steps
+
+BUILD_DIR=${1:-}
+CACHE_DIR=${2:-}
+ENV_DIR=${3:-}
+BP_DIR=$(cd $(dirname ${0:-}); cd ..; pwd)
+
+
+mkdir -p "$BUILD_DIR/.kpack/bin"
+cd $BUILD_DIR
+
+mkdir -p $BUILD_DIR/.profile.d
+cp $BP_DIR/profile/* $BUILD_DIR/.profile.d/
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+release_url="https://github.com/vmware-tanzu/kpack-cli/releases/download/v0.7.1/kp-linux-amd64-0.7.1"
+file=${CACHE_DIR}/kp
+
+wget -q -O ${file} ${release_url} 
+
+filedest=$BUILD_DIR/.kpack/bin/kp
+cp $file $filedest
+chmod +x $filedest
+echo "Done" | indent
+exit 0
