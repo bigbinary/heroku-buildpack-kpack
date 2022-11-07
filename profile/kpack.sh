@@ -1,1 +1,1 @@
-export PATH="$HOME/.eksctl/bin:$PATH"
+export PATH="$HOME/.kpack/bin:$PATH"
